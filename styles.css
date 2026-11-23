@@ -171,7 +171,12 @@ img { display: block; max-width: 100%; }
 .footer__top { min-height: 130px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #2b2e31; }
 .brand--footer { color: white; }
 .footer__links { display: flex; gap: 30px; font-size: 11px; }
-.footer__bottom { min-height: 85px; display: flex; align-items: center; justify-content: space-between; color: #696f74; font-size: 9px; }
+.footer__bottom { min-height: 100px; display: flex; align-items: center; justify-content: space-between; color: #696f74; font-size: 9px; }
+.footer__event-info > p { margin-bottom: 9px; }
+.footer__developer { display: flex; align-items: center; gap: 16px; color: #7f858a; font: 500 9px "Manrope", "Noto Sans KR", sans-serif; letter-spacing: .02em; }
+.footer__developer p { margin: 0; }
+.footer__developer span { margin-right: 8px; color: #d4d7d9; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+.footer__developer a:hover { color: white; }
 
 .modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 22px; visibility: hidden; opacity: 0; transition: opacity .25s, visibility .25s; }
 .modal.is-open { visibility: visible; opacity: 1; }
@@ -272,6 +277,8 @@ input:focus, select:focus, textarea:focus { border-color: var(--ink); }
   .footer__top { min-height: 110px; }
   .footer__links { gap: 18px; }
   .footer__bottom { display: block; padding-block: 22px; line-height: 1.5; }
+  .footer__event-info { margin-bottom: 14px; }
+  .footer__developer { min-height: auto; align-items: flex-start; flex-direction: column; gap: 5px; }
   .modal__panel { padding: 36px 25px; }
   .contact-options { grid-template-columns: 1fr; }
   .contact-option { min-height: 118px; }
