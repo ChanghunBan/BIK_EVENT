@@ -13,25 +13,6 @@ const products = [
 const currency = new Intl.NumberFormat("ko-KR");
 const grid = document.querySelector("#productGrid");
 const count = document.querySelector("#productCount");
-const select = document.querySelector("#productSelect");
-const consultationEmail = "double@bsco.co.kr";
-const consultationPhone = "01055413307";
-const isMobile = () => window.matchMedia("(max-width: 780px), (pointer: coarse)").matches;
-
-function updateMessageLabels() {
-  const mobile = isMobile();
-  document.querySelector("#messageOptionTitle").textContent = mobile ? "문자 문의" : "이메일 문의";
-  document.querySelector("#messageOptionText").textContent = mobile
-    ? "작성 내용을 문자 메시지에 입력합니다"
-    : "작성 내용을 이메일 초안에 입력합니다";
-  document.querySelector("#messageTypeLabel").textContent = mobile ? "문자 문의" : "이메일 문의";
-  document.querySelector("#messageTypeDescription").textContent = mobile
-    ? "작성한 내용이 문자 앱에 자동으로 입력됩니다."
-    : "작성한 내용이 이메일 앱에 자동으로 입력됩니다.";
-  document.querySelector("#messageTypeNotice").textContent = mobile
-    ? "작성 완료 후 문자 앱이 열립니다."
-    : "작성 완료 후 이메일 앱이 열립니다.";
-}
 
 function discountPercent(product) {
   return Math.round(((product.retail - product.price) / product.retail) * 100);
@@ -70,10 +51,6 @@ function productCard(product) {
 
 products.forEach((product) => {
   grid.append(productCard(product));
-  const option = document.createElement("option");
-  option.value = product.model;
-  option.textContent = `${product.model} · ${product.name}`;
-  select.append(option);
 });
 
 const revealObserver = new IntersectionObserver((entries) => {
@@ -103,21 +80,18 @@ document.querySelectorAll(".filter").forEach((button) => {
 });
 
 const modal = document.querySelector("#consultModal");
-const form = document.querySelector("#consultForm");
-const contactChoices = document.querySelector("#contactChoices");
-const phonePanel = document.querySelector("#phonePanel");
-const messageIntro = document.querySelector("#messageIntro");
 let lastFocused = null;
 
 function openModal(productModel = "") {
-  updateMessageLabels();
   lastFocused = document.activeElement;
-  if (productModel) select.value = productModel;
-  showContactChoices();
+  const message = document.querySelector("#kakaoProductMessage");
+  message.textContent = productModel
+    ? `${productModel} 모델을 문의하실 수 있습니다. 카카오톡에서 해당 모델명과 함께 문의해 주세요.`
+    : "모바일에서는 채팅으로 바로 연결되고, PC에서는 QR 코드로 간편하게 입장할 수 있습니다.";
   modal.classList.add("is-open");
   modal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
-  setTimeout(() => modal.querySelector("[data-call-modal]").focus(), 50);
+  setTimeout(() => modal.querySelector(".kakao-button").focus(), 50);
 }
 
 function closeModal() {
@@ -127,42 +101,9 @@ function closeModal() {
   lastFocused?.focus();
 }
 
-function showContactChoices() {
-  contactChoices.hidden = false;
-  phonePanel.hidden = true;
-  messageIntro.hidden = true;
-  form.hidden = true;
-}
-
-function showMessageForm() {
-  contactChoices.hidden = true;
-  phonePanel.hidden = true;
-  messageIntro.hidden = false;
-  form.hidden = false;
-  setTimeout(() => form.querySelector('input[name="name"]').focus(), 30);
-}
-
-function callContact() {
-  if (isMobile()) {
-    window.location.href = `tel:${consultationPhone}`;
-    return;
-  }
-  if (!modal.classList.contains("is-open")) openModal();
-  contactChoices.hidden = true;
-  phonePanel.hidden = false;
-  messageIntro.hidden = true;
-  form.hidden = true;
-  setTimeout(() => modal.querySelector(".modal__close").focus(), 60);
-}
-
 document.querySelectorAll("[data-open-modal]").forEach((button) => {
   button.addEventListener("click", () => openModal());
 });
-
-document.querySelectorAll("[data-call-contact]").forEach((button) => button.addEventListener("click", callContact));
-modal.querySelector("[data-call-modal]").addEventListener("click", callContact);
-modal.querySelector("[data-message-modal]").addEventListener("click", showMessageForm);
-modal.querySelectorAll("[data-back-choice]").forEach((button) => button.addEventListener("click", showContactChoices));
 
 grid.addEventListener("click", (event) => {
   const button = event.target.closest("[data-product]");
@@ -173,35 +114,6 @@ document.querySelectorAll("[data-close-modal]").forEach((button) => button.addEv
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && modal.classList.contains("is-open")) closeModal();
 });
-
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const data = new FormData(form);
-  const product = data.get("product") || "제품 추천 필요";
-  const message = [
-    "[보쉬코리아 임직원 행사 문의]",
-    "",
-    `이름: ${data.get("name")}`,
-    `연락처: ${data.get("phone")}`,
-    `관심 상품: ${product}`,
-    "",
-    `문의 내용: ${data.get("message") || "추가 문의 없음"}`,
-    "",
-    "개인정보 수집 및 상담 이용에 동의함"
-  ].join("\n");
-
-  if (isMobile()) {
-    const separator = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? "&" : "?";
-    window.location.href = `sms:${consultationPhone}${separator}body=${encodeURIComponent(message)}`;
-    return;
-  }
-
-  const subject = encodeURIComponent(`보쉬코리아 임직원 행사 문의 - ${data.get("name")}`);
-  window.location.href = `mailto:${consultationEmail}?subject=${subject}&body=${encodeURIComponent(message)}`;
-});
-
-window.addEventListener("resize", updateMessageLabels);
-updateMessageLabels();
 
 const menuButton = document.querySelector(".menu-button");
 const nav = document.querySelector("#mainNav");
